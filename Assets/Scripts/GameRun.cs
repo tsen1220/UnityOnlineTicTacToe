@@ -16,7 +16,7 @@ public class GameRun : MonoBehaviour
     private LobbyNakamaClient nakamaClient;
     private IMatchmakerMatched matchInfo;
 
-
+    private bool drawControl = true;
 
     private ISocket socket;
 
@@ -52,47 +52,55 @@ public class GameRun : MonoBehaviour
         xIndex = Mathf.RoundToInt(relativePosition.x) / 160;
         yIndex = Mathf.RoundToInt(relativePosition.y) / 160;
 
-        
 
-        if (TicTac.text != "") {
+        if (drawControl)
+        {
             return;
         }
         else
         {
-            if (Turn)
+            if (TicTac.text != "")
             {
-                TicTac.text = "O";
-                Turn = false;
-                GameRecord[xIndex, yIndex] = 1;
-
-
-                // 0: xIndex 1:yIndex 2:下的種類
-
-                int[] drawPostion = new int[3];
-                drawPostion[0] = xIndex;
-                drawPostion[1] = yIndex;
-                drawPostion[2] = 1;
-
-                
-
-               await socket.SendMatchStateAsync(matchInfo.MatchId, 1, drawPostion.ToJson() );
-
+                return;
             }
             else
             {
-                TicTac.text = "X";
-                Turn = true;
-                GameRecord[xIndex, yIndex] = 2;
+                if (Turn)
+                {
+                    TicTac.text = "O";
+                    Turn = false;
+                    GameRecord[xIndex, yIndex] = 1;
 
-                int[] drawPostion = new int[3];
-                drawPostion[0] = xIndex;
-                drawPostion[1] = yIndex;
-                drawPostion[2] = 2;
 
-                await socket.SendMatchStateAsync(matchInfo.MatchId, 2, drawPostion.ToJson() );
+                    // 0: xIndex 1:yIndex 2:下的種類
 
+                    int[] drawPostion = new int[3];
+                    drawPostion[0] = xIndex;
+                    drawPostion[1] = yIndex;
+                    drawPostion[2] = 1;
+
+
+
+                    await socket.SendMatchStateAsync(matchInfo.MatchId, 1, drawPostion.ToJson());
+
+                }
+                else
+                {
+                    TicTac.text = "X";
+                    Turn = true;
+                    GameRecord[xIndex, yIndex] = 2;
+
+                    int[] drawPostion = new int[3];
+                    drawPostion[0] = xIndex;
+                    drawPostion[1] = yIndex;
+                    drawPostion[2] = 2;
+
+                    await socket.SendMatchStateAsync(matchInfo.MatchId, 2, drawPostion.ToJson());
+
+                }
             }
         }
+       
        
 
     }
@@ -107,9 +115,19 @@ public class GameRun : MonoBehaviour
             int yindex = (RecordData[3])-48;
             int TicTac = (RecordData[5])-48;
 
-            Debug.Log(GameRecord[xindex, yindex]);
+            GameRecord[xindex, yindex]=TicTac;
 
-            Debug.Log($"xindex:{xindex},yindex:{yindex},TicTac:{TicTac}");
+            GameObject chooseObject = GameObject.FindGameObjectWithTag($"Cell{xindex}{yindex}");
+
+            Text chooseTicTac = chooseObject.GetComponent<Text>();
+
+            if(TicTac == 1)
+            {
+                chooseTicTac.text = "O";
+            }else if(TicTac ==2)
+            {
+                chooseTicTac.text = "X";
+            }
 
         };
     }

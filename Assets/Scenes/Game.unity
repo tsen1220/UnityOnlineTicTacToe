@@ -317,6 +317,51 @@ PrefabInstance:
       propertyPath: m_Text
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 8041371447714263939, guid: 2e4421b9c06bc444f9bec9b4e9680d06,
+        type: 3}
+      propertyPath: m_TagString
+      value: Cell21
+      objectReference: {fileID: 0}
+    - target: {fileID: 8041371447722505026, guid: 2e4421b9c06bc444f9bec9b4e9680d06,
+        type: 3}
+      propertyPath: m_TagString
+      value: Cell22
+      objectReference: {fileID: 0}
+    - target: {fileID: 8041371448017772851, guid: 2e4421b9c06bc444f9bec9b4e9680d06,
+        type: 3}
+      propertyPath: m_TagString
+      value: Cell00
+      objectReference: {fileID: 0}
+    - target: {fileID: 8041371448315470367, guid: 2e4421b9c06bc444f9bec9b4e9680d06,
+        type: 3}
+      propertyPath: m_TagString
+      value: Cell11
+      objectReference: {fileID: 0}
+    - target: {fileID: 8041371449242598487, guid: 2e4421b9c06bc444f9bec9b4e9680d06,
+        type: 3}
+      propertyPath: m_TagString
+      value: Cell01
+      objectReference: {fileID: 0}
+    - target: {fileID: 8041371449275319320, guid: 2e4421b9c06bc444f9bec9b4e9680d06,
+        type: 3}
+      propertyPath: m_TagString
+      value: Cell20
+      objectReference: {fileID: 0}
+    - target: {fileID: 8041371449401705866, guid: 2e4421b9c06bc444f9bec9b4e9680d06,
+        type: 3}
+      propertyPath: m_TagString
+      value: Cell12
+      objectReference: {fileID: 0}
+    - target: {fileID: 8041371449566758043, guid: 2e4421b9c06bc444f9bec9b4e9680d06,
+        type: 3}
+      propertyPath: m_TagString
+      value: Cell10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8041371449630805305, guid: 2e4421b9c06bc444f9bec9b4e9680d06,
+        type: 3}
+      propertyPath: m_TagString
+      value: Cell02
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2e4421b9c06bc444f9bec9b4e9680d06, type: 3}
 --- !u!1 &1042228349

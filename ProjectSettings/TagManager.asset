@@ -10,6 +10,15 @@ TagManager:
   - WaitMsg
   - Title
   - LobbyNakamaClient
+  - Cell00
+  - Cell01
+  - Cell02
+  - Cell10
+  - Cell20
+  - Cell11
+  - Cell12
+  - Cell21
+  - Cell22
   layers:
   - Default
   - TransparentFX
