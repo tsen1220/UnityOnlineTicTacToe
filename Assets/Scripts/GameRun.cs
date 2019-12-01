@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
+using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 using Nakama;
@@ -50,6 +52,7 @@ public class GameRun : MonoBehaviour
         xIndex = Mathf.RoundToInt(relativePosition.x) / 160;
         yIndex = Mathf.RoundToInt(relativePosition.y) / 160;
 
+        
 
         if (TicTac.text != "") {
             return;
@@ -61,10 +64,18 @@ public class GameRun : MonoBehaviour
                 TicTac.text = "O";
                 Turn = false;
                 GameRecord[xIndex, yIndex] = 1;
-                var encode_data = GameRecord.ToJson();
 
 
-               await socket.SendMatchStateAsync(matchInfo.MatchId, 1,encode_data);
+                // 0: xIndex 1:yIndex 2:下的種類
+
+                int[] drawPostion = new int[3];
+                drawPostion[0] = xIndex;
+                drawPostion[1] = yIndex;
+                drawPostion[2] = 1;
+
+                
+
+               await socket.SendMatchStateAsync(matchInfo.MatchId, 1, drawPostion.ToJson() );
 
             }
             else
@@ -72,9 +83,13 @@ public class GameRun : MonoBehaviour
                 TicTac.text = "X";
                 Turn = true;
                 GameRecord[xIndex, yIndex] = 2;
-                var encode_data = GameRecord.ToJson();
 
-                await socket.SendMatchStateAsync(matchInfo.MatchId, 2, encode_data);
+                int[] drawPostion = new int[3];
+                drawPostion[0] = xIndex;
+                drawPostion[1] = yIndex;
+                drawPostion[2] = 2;
+
+                await socket.SendMatchStateAsync(matchInfo.MatchId, 2, drawPostion.ToJson() );
 
             }
         }
@@ -87,8 +102,15 @@ public class GameRun : MonoBehaviour
     {
         socket.ReceivedMatchState += data =>
         {
-            IMatchState Current = data;
-            print(Current.State);
+            var RecordData=  System.Text.Encoding.UTF8.GetString(data.State);
+            int xindex = (RecordData[1])-48;
+            int yindex = (RecordData[3])-48;
+            int TicTac = (RecordData[5])-48;
+
+            Debug.Log(GameRecord[xindex, yindex]);
+
+            Debug.Log($"xindex:{xindex},yindex:{yindex},TicTac:{TicTac}");
+
         };
     }
 }
