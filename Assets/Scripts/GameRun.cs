@@ -16,11 +16,12 @@ public class GameRun : MonoBehaviour
     private LobbyNakamaClient nakamaClient;
     private IMatchmakerMatched matchInfo;
 
-    private bool drawControl = true;
+    private bool drawControl = false;
 
     private ISocket socket;
 
     private int xIndex, yIndex;
+
 
 
 
@@ -37,10 +38,33 @@ public class GameRun : MonoBehaviour
         matchInfo = LobbyNakamaClient.MatchInfo;
         await socket.JoinMatchAsync(matchInfo);
 
-        ReceiveMsg();
+        ReceiveData();
+    }
 
+
+    private void Update()
+    {
+        for(int i = 0; i<3;i++)
+        {
+            for(int j = 0; j < 3; j++)
+            {
+                GameObject chooseObject = GameObject.FindGameObjectWithTag($"Cell{i}{j}");
+
+                Text chooseTicTac = chooseObject.GetComponentInChildren<Text>();
+
+                if (GameRecord[i,j] == 1)
+                {
+                    chooseTicTac.text = "O";
+                }
+                else if (GameRecord[i,j] == 2)
+                {
+                    chooseTicTac.text = "X";
+                }
+            }
+        }
 
     }
+
 
     public async void Draw()
     {
@@ -106,30 +130,21 @@ public class GameRun : MonoBehaviour
     }
 
 
-    private void ReceiveMsg()
+    private void ReceiveData()
     {
         socket.ReceivedMatchState += data =>
         {
-            var RecordData=  System.Text.Encoding.UTF8.GetString(data.State);
-            int xindex = (RecordData[1])-48;
-            int yindex = (RecordData[3])-48;
-            int TicTac = (RecordData[5])-48;
+            var RecordData = System.Text.Encoding.UTF8.GetString(data.State);
+            int xindex = (RecordData[1]) - 48;
+            int yindex = (RecordData[3]) - 48;
+            int TicTac = (RecordData[5]) - 48;
 
-            GameRecord[xindex, yindex]=TicTac;
-
-            GameObject chooseObject = GameObject.FindGameObjectWithTag($"Cell{xindex}{yindex}");
-
-            Text chooseTicTac = chooseObject.GetComponent<Text>();
-
-            if(TicTac == 1)
-            {
-                chooseTicTac.text = "O";
-            }else if(TicTac ==2)
-            {
-                chooseTicTac.text = "X";
-            }
-
+            GameRecord[xindex, yindex] = TicTac;
+            drawControl = true;
         };
     }
 }
+
+
+
 
