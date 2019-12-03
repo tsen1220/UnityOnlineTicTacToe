@@ -19,6 +19,7 @@ TagManager:
   - Cell12
   - Cell21
   - Cell22
+  - Test
   layers:
   - Default
   - TransparentFX

@@ -6,22 +6,30 @@ using UnityEngine;
 using UnityEngine.UI;
 using Nakama;
 using Nakama.TinyJson;
+using LitJson;
 
 public class GameRun : MonoBehaviour
 {
     // True 為圈 False為叉
+
+    // opCode= 1 : 客戶端有人下了O;
+    // opCode= 2 : 客戶端有人下了X;
+    // opCode= 3 : 伺服器端送訊息給客戶端;
+    // opCode= 4 : 伺服器端在賽局開始時決定先攻後守;
+
     public static bool Turn = true;
     public static int[,] GameRecord = new int[3,3];
 
     private LobbyNakamaClient nakamaClient;
     private IMatchmakerMatched matchInfo;
 
-    private bool drawControl = false;
+    public static bool drawControl = true;
 
     private ISocket socket;
 
     private int xIndex, yIndex;
 
+    private Text test;
 
 
 
@@ -31,12 +39,16 @@ public class GameRun : MonoBehaviour
 
         nakamaClient = GameObject.FindGameObjectWithTag(Tags.Lobby.LobbyNakamaClient).GetComponent<LobbyNakamaClient>();
         socket = nakamaClient.socket;
+
+        test = GameObject.FindGameObjectWithTag("Test").GetComponent<Text>();
     }
 
     private async void Start()
-    {
+    {   
         matchInfo = LobbyNakamaClient.MatchInfo;
         await socket.JoinMatchAsync(matchInfo);
+
+        await socket.SendMatchStateAsync(matchInfo.MatchId, 4, "GameStart");
 
         ReceiveData();
     }
@@ -62,7 +74,7 @@ public class GameRun : MonoBehaviour
                 }
             }
         }
-
+        test.text = drawControl.ToString();
     }
 
 
@@ -83,7 +95,7 @@ public class GameRun : MonoBehaviour
         }
         else
         {
-            if (TicTac.text != "")
+            if (GameRecord[xIndex,yIndex] !=0)
             {
                 return;
             }
@@ -103,8 +115,10 @@ public class GameRun : MonoBehaviour
                     drawPostion[1] = yIndex;
                     drawPostion[2] = 1;
 
+                    drawControl = true;
 
 
+                    //使用Nakama的TinyJson       using Nakama.TinyJson
                     await socket.SendMatchStateAsync(matchInfo.MatchId, 1, drawPostion.ToJson());
 
                 }
@@ -119,6 +133,10 @@ public class GameRun : MonoBehaviour
                     drawPostion[1] = yIndex;
                     drawPostion[2] = 2;
 
+                    drawControl = true;
+
+                    //使用Nakama的TinyJson       using Nakama.TinyJson
+
                     await socket.SendMatchStateAsync(matchInfo.MatchId, 2, drawPostion.ToJson());
 
                 }
@@ -130,17 +148,34 @@ public class GameRun : MonoBehaviour
     }
 
 
+    // 使用LitJson來解析Json．
+
     private void ReceiveData()
     {
         socket.ReceivedMatchState += data =>
         {
-            var RecordData = System.Text.Encoding.UTF8.GetString(data.State);
-            int xindex = (RecordData[1]) - 48;
-            int yindex = (RecordData[3]) - 48;
-            int TicTac = (RecordData[5]) - 48;
+            if(data.OpCode == 3)
+            {
+                var RecordData = System.Text.Encoding.UTF8.GetString(data.State);
+                int xindex = (RecordData[1]) - 48;
+                int yindex = (RecordData[3]) - 48;
+                int TicTac = (RecordData[5]) - 48;
 
-            GameRecord[xindex, yindex] = TicTac;
-            drawControl = true;
+                GameRecord[xindex, yindex] = TicTac; 
+                drawControl = false;
+            }
+
+            if (data.OpCode == 5)
+            {
+                string RecordData = System.Text.Encoding.UTF8.GetString(data.State);
+                JsonData theData = JsonMapper.ToObject(RecordData);
+                if (theData["control"].ToString() == "False")
+                {
+                    drawControl = false;
+                }
+
+            }
+
         };
     }
 }
