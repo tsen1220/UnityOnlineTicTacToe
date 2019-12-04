@@ -84,7 +84,7 @@ public class FakerPlayer : MonoBehaviour
     {
         socket.ReceivedMatchmakerMatched += async matched =>
         {
-            await socket.JoinMatchAsync(matched);
+            await socket.JoinMatchAsync(matched.MatchId);
           
         };
     }

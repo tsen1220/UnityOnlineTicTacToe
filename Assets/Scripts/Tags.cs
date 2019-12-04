@@ -13,5 +13,10 @@ public class Tags  {
         public const string Title = "Title";
         public const string LobbyNakamaClient = "LobbyNakamaClient";
     }
+
+    public class Game
+    {
+        public const string WinMsg = "Test";
+    }
 }
 

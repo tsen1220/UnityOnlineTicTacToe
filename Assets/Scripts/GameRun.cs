@@ -29,7 +29,10 @@ public class GameRun : MonoBehaviour
 
     private int xIndex, yIndex;
 
-    private Text test;
+    private Text WinMsg;
+
+    public bool Victory = false;
+
 
 
 
@@ -40,14 +43,14 @@ public class GameRun : MonoBehaviour
         nakamaClient = GameObject.FindGameObjectWithTag(Tags.Lobby.LobbyNakamaClient).GetComponent<LobbyNakamaClient>();
         socket = nakamaClient.socket;
 
-        test = GameObject.FindGameObjectWithTag("Test").GetComponent<Text>();
+        WinMsg = GameObject.FindGameObjectWithTag(Tags.Game.WinMsg).GetComponent<Text>();
 
     }
 
     private async void Start()
     {   
         matchInfo = LobbyNakamaClient.MatchInfo;
-        await socket.JoinMatchAsync(matchInfo);
+        await socket.JoinMatchAsync(matchInfo.MatchId);
 
         await socket.SendMatchStateAsync(matchInfo.MatchId, 4, "GameStart");
 
@@ -55,7 +58,7 @@ public class GameRun : MonoBehaviour
     }
 
 
-    private void Update()
+    private async void Update()
     {
         for(int i = 0; i<3;i++)
         {
@@ -75,7 +78,20 @@ public class GameRun : MonoBehaviour
                 }
             }
         }
-        test.text = drawControl.ToString();
+
+        if (VictoryCondition(1))
+        {
+            WinMsg.text = "O Win!";
+            await socket.SendMatchStateAsync(matchInfo.MatchId, 8,"O Win");
+            Victory = true;
+        }
+        else if (VictoryCondition(2))
+        {
+            WinMsg.text = "X Win!";
+            await socket.SendMatchStateAsync(matchInfo.MatchId, 8,"X Win");
+            Victory = true;
+        }
+     
     }
 
 
@@ -182,6 +198,153 @@ public class GameRun : MonoBehaviour
             }
 
         };
+    }
+
+
+
+    public bool VictoryCondition(int TicTac)
+    {
+        int victoryXIndex = 0;
+        int victoryYIndex = 0;
+        int victoryCount = 0;
+
+
+        //橫 1
+        while (GameRecord[victoryXIndex,victoryYIndex] !=0 && GameRecord[victoryXIndex, victoryYIndex] == TicTac)
+        {
+            victoryCount += 1;
+            if(victoryCount == 3)
+            {
+                return true;
+            }
+            victoryXIndex += 1;
+          
+        }
+        victoryCount = 0;
+
+        //橫 2
+        victoryXIndex = 0;
+        victoryYIndex = 1;
+
+        while (GameRecord[victoryXIndex, victoryYIndex] != 0 && GameRecord[victoryXIndex, victoryYIndex] == TicTac)
+        {
+            victoryCount += 1;
+            if (victoryCount == 3)
+            {
+                return true;
+            }
+            victoryXIndex += 1;
+
+        }
+        victoryCount = 0;
+
+        //橫 3
+
+        victoryXIndex = 0;
+        victoryYIndex = 2;
+
+        while (GameRecord[victoryXIndex, victoryYIndex] != 0 && GameRecord[victoryXIndex, victoryYIndex] == TicTac)
+        {
+            victoryCount += 1;
+            if (victoryCount == 3)
+            {
+                return true;
+            }
+            victoryXIndex += 1;
+
+        }
+        victoryCount = 0;
+
+        //直 1
+
+        victoryXIndex = 0;
+        victoryYIndex = 0;
+
+        while (GameRecord[victoryXIndex, victoryYIndex] != 0 && GameRecord[victoryXIndex, victoryYIndex] == TicTac)
+        {
+            victoryCount += 1;
+            if (victoryCount == 3)
+            {
+                return true;
+            }
+            victoryYIndex += 1;
+
+        }
+        victoryCount = 0;
+
+        //直 2
+        victoryXIndex = 1;
+        victoryYIndex = 0;
+
+        while (GameRecord[victoryXIndex, victoryYIndex] != 0 && GameRecord[victoryXIndex, victoryYIndex] == TicTac)
+        {
+            victoryCount += 1;
+            if (victoryCount == 3)
+            {
+                return true;
+            }
+            victoryYIndex += 1;
+
+        }
+        victoryCount = 0;
+
+        //直 3
+
+        victoryXIndex = 2;
+        victoryYIndex = 0;
+
+        while (GameRecord[victoryXIndex, victoryYIndex] != 0 && GameRecord[victoryXIndex, victoryYIndex] == TicTac)
+        {
+            victoryCount += 1;
+            if (victoryCount == 3)
+            {
+                return true;
+            }
+            victoryYIndex += 1;
+
+        }
+        victoryCount = 0;
+
+
+        //斜 1
+
+        victoryXIndex = 0;
+        victoryYIndex = 0;
+
+        while (GameRecord[victoryXIndex, victoryYIndex] != 0 && GameRecord[victoryXIndex, victoryYIndex] == TicTac)
+        {
+            victoryCount += 1;
+            if (victoryCount == 3)
+            {
+                return true;
+            }
+            victoryXIndex += 1;
+            victoryYIndex += 1;
+
+        }
+        victoryCount = 0;
+
+
+        //斜 2
+
+        victoryXIndex = 0;
+        victoryYIndex = 2;
+
+        while (GameRecord[victoryXIndex, victoryYIndex] != 0 && GameRecord[victoryXIndex, victoryYIndex] == TicTac)
+        {
+            victoryCount += 1;
+            if (victoryCount == 3)
+            {
+                return true;
+            }
+            victoryXIndex += 1;
+            victoryYIndex -= 1;
+
+        }
+        victoryCount = 0;
+
+
+        return false;
     }
 }
 
