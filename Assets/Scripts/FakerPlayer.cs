@@ -15,8 +15,9 @@ public class FakerPlayer : MonoBehaviour
 
     public async void CreateFakerPlayer(int index)
     {
+
             try
-            {   
+            {
             socket = client.NewSocket();
             socket.Connected += () =>
             {
@@ -41,15 +42,17 @@ public class FakerPlayer : MonoBehaviour
 
 
             AddFakerPlayer();
+            FakerMatchComplete();
 
 
 
         }
-        catch(System.Exception e)
+        catch (System.Exception e)
         {
             Debug.Log(e);
         }
-       
+
+
 
     }
 
@@ -75,15 +78,14 @@ public class FakerPlayer : MonoBehaviour
         // nakama socket API  當加入Nakama的排隊系統時 會有一個Ticket
         matchTicket = await socket.AddMatchmakerAsync(query, minCount, maxCount, stringProperties, numericProperties);
 
-
-  
     }
 
-    public async void FakerMatchComplete()
+    public void FakerMatchComplete()
     {
         socket.ReceivedMatchmakerMatched += async matched =>
         {
-            print(matched);
+            await socket.JoinMatchAsync(matched);
+          
         };
     }
 

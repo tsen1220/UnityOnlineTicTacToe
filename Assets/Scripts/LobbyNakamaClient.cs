@@ -40,7 +40,7 @@ public class LobbyNakamaClient : MonoBehaviour
         socket.Connected += () => Debug.Log("Socket connected.");
         socket.ReceivedError += e => Debug.LogErrorFormat("Socket error: {0}", e.Message);
 
-        var deviceId = SystemInfo.deviceUniqueIdentifier;
+        var deviceId = $"SystemInfo.deviceUniqueIdentifier-f-{5}";
         session = await client.AuthenticateDeviceAsync(deviceId);
         await socket.ConnectAsync(session);
 
@@ -116,9 +116,9 @@ public class LobbyNakamaClient : MonoBehaviour
     /// 配對完成就會將Ticket 刪除
     ///
     /// </summary>
-    public async void matchComplete()
+    public void matchComplete()
     {
-        socket.ReceivedMatchmakerMatched += async matched =>
+        socket.ReceivedMatchmakerMatched += matched =>
         {
             MatchInfo = matched;
             readyToGo = true;

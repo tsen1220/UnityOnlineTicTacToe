@@ -34,13 +34,14 @@ public class GameRun : MonoBehaviour
 
 
  
-    private async void Awake()
+    private  void Awake()
     {
 
         nakamaClient = GameObject.FindGameObjectWithTag(Tags.Lobby.LobbyNakamaClient).GetComponent<LobbyNakamaClient>();
         socket = nakamaClient.socket;
 
         test = GameObject.FindGameObjectWithTag("Test").GetComponent<Text>();
+
     }
 
     private async void Start()
@@ -88,7 +89,6 @@ public class GameRun : MonoBehaviour
         xIndex = Mathf.RoundToInt(relativePosition.x) / 160;
         yIndex = Mathf.RoundToInt(relativePosition.y) / 160;
 
-
         if (drawControl)
         {
             return;
@@ -104,7 +104,6 @@ public class GameRun : MonoBehaviour
                 if (Turn)
                 {
                     TicTac.text = "O";
-                    Turn = false;
                     GameRecord[xIndex, yIndex] = 1;
 
 
@@ -125,7 +124,6 @@ public class GameRun : MonoBehaviour
                 else
                 {
                     TicTac.text = "X";
-                    Turn = true;
                     GameRecord[xIndex, yIndex] = 2;
 
                     int[] drawPostion = new int[3];
@@ -163,6 +161,13 @@ public class GameRun : MonoBehaviour
 
                 GameRecord[xindex, yindex] = TicTac; 
                 drawControl = false;
+                if(TicTac == 1)
+                {
+                    Turn = false;
+                }else if(TicTac == 2)
+                {
+                    Turn = true;
+                }
             }
 
             if (data.OpCode == 5)
