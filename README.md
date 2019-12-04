@@ -53,7 +53,9 @@ After receiving the session, Take the session to build the socket with socket AP
 
 ## Add And Remove Nakama Matchmaker Process
 
-When our socket has built, we can add to Nakama matchmaker pool and then get a matchmakerticket with socket API : socket.AddMatchmakerAsync(query, minCount, maxCount, stringProperties, numericProperties) .
+When our socket has built, we can add to Nakama matchmaker pool and then get a matchmakerticket with socket API : 
+
+socket.AddMatchmakerAsync(query, minCount, maxCount, stringProperties, numericProperties) .
 
 ```
 
