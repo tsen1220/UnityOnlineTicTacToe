@@ -11,7 +11,12 @@ We need to import Nakama and LitJson to build this app.
 We need to get session and client to let the websocket connected.
 
 ```
+    ...
     using Nakama;
+    using Nakama.TinyJson;
+    ...
+    ...
+    ...
 ```
 
 First, we get the client information and create a new socket with client API : client.NewSocket().
@@ -81,11 +86,13 @@ This action will remove your matchTicket and leave the matchmaker pool.
     }
 ```
 
-## ReceivedMatchmakerMatched
+## Received Matchmaker Matched And Join Match
 
 Client has the event listener to handle the information When users in Nakama matchmaker pool are matched.
 
-With socket API : socket.ReceivedMatchmakerMatched += matchedInformation => callback .
+This part is associated with Nakama Server match_create with lua.
+
+With socket API : socket.ReceivedMatchmakerMatched += matchedInformation => callback() .
 
 ```
 
@@ -100,6 +107,57 @@ socket.ReceivedMatchmakerMatched += matched =>
 
 And players can join the match after receiving the match information from socket API : socket.ReceivedMatchmakerMatched.
 
+This part is associated with Nakama Server match_join_attempt and match_join with lua.
+
 ```
      await socket.JoinMatchAsync(matchInfo);
+```
+
+# Match Running
+
+This part is associated with Nakama Server match_loop with lua.
+
+We can send json_encode_data about match to Nakama Server with socket API : socket.SendMatchStateAsync( MatchId, opCode, json_encode_data );
+
+```
+       await socket.SendMatchStateAsync(matchInfo.MatchId, 1, drawPostion.ToJson());
+```
+
+And Receive the Nakama server data with socket API : socket.ReceivedMatchState += data => callback().
+
+```
+        socket.ReceivedMatchState += data =>
+        {
+            if(data.OpCode == 3)
+            {
+                var RecordData = System.Text.Encoding.UTF8.GetString(data.State);
+                int xindex = (RecordData[1]) - 48;
+                int yindex = (RecordData[3]) - 48;
+                int TicTac = (RecordData[5]) - 48;
+
+                GameRecord[xindex, yindex] = TicTac; 
+                drawControl = false;
+                if(TicTac == 1)
+                {
+                    Turn = false;
+                }else if(TicTac == 2)
+                {
+                    Turn = true;
+                }
+            }
+
+            if (data.OpCode == 5)
+            {
+                string RecordData = System.Text.Encoding.UTF8.GetString(data.State);
+                JsonData theData = JsonMapper.ToObject(RecordData);
+                if (theData["control"].ToString() == "False")
+                {
+                    drawControl = false;
+                }
+
+            }
+
+        };
+
+        data : data from Nakama Server.
 ```
