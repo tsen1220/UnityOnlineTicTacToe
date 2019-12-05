@@ -33,7 +33,7 @@ public class GameRun : MonoBehaviour
 
     public bool Victory = false;
 
-    private bool SwitchWin = true;
+    private bool SwitchWin;
 
     private string WinWinMsg;
 
@@ -41,6 +41,8 @@ public class GameRun : MonoBehaviour
  
     private  void Awake()
     {
+        SwitchWin = true;
+        Victory = false;
 
         nakamaClient = GameObject.FindGameObjectWithTag(Tags.Lobby.LobbyNakamaClient).GetComponent<LobbyNakamaClient>();
         socket = nakamaClient.socket;
@@ -86,19 +88,27 @@ public class GameRun : MonoBehaviour
             if (VictoryCondition(1))
             { 
                 await socket.SendMatchStateAsync(matchInfo.MatchId, 8, "O Win");
+                SwitchWin = false;
             }
             else if (VictoryCondition(2))
             {
                 
                 await socket.SendMatchStateAsync(matchInfo.MatchId, 9, "X Win");
-              
-            }
-            if (Victory)
-            {
-                WinMsg.text = WinWinMsg;
                 SwitchWin = false;
+
             }
-        }     
+        }
+
+        if (Victory)
+        {
+            WinMsg.text = WinWinMsg;
+            Turn = true;
+            drawControl = true;
+
+        }
+
+
+        
     }
 
 
@@ -175,7 +185,9 @@ public class GameRun : MonoBehaviour
     {
         socket.ReceivedMatchState += data =>
         {
-            if(data.OpCode == 3)
+
+            print(data.OpCode);
+            if (data.OpCode == 3)
             {
                 var RecordData = System.Text.Encoding.UTF8.GetString(data.State);
                 int xindex = (RecordData[1]) - 48;
@@ -200,6 +212,7 @@ public class GameRun : MonoBehaviour
                 if (theData["control"].ToString() == "False")
                 {
                     drawControl = false;
+                   
                 }
 
             }
