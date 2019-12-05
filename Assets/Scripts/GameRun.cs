@@ -18,7 +18,7 @@ public class GameRun : MonoBehaviour
     // opCode= 4 : 伺服器端在賽局開始時決定先攻後守;
 
     public static bool Turn = true;
-    public static int[,] GameRecord = new int[3,3];
+    public int[,] GameRecord = new int[3,3];
 
     private LobbyNakamaClient nakamaClient;
     private IMatchmakerMatched matchInfo;
@@ -35,6 +35,7 @@ public class GameRun : MonoBehaviour
 
     private bool SwitchWin = true;
 
+    private string WinWinMsg;
 
 
  
@@ -83,21 +84,21 @@ public class GameRun : MonoBehaviour
         if (SwitchWin)
         {
             if (VictoryCondition(1))
-            {
-                WinMsg.text = "O Win!";
+            { 
                 await socket.SendMatchStateAsync(matchInfo.MatchId, 8, "O Win");
-                Victory = true;
-                SwitchWin = false;
             }
             else if (VictoryCondition(2))
             {
-                WinMsg.text = "X Win!";
+                
                 await socket.SendMatchStateAsync(matchInfo.MatchId, 9, "X Win");
-                SwitchWin = true;
+              
             }
-        }
-     
-     
+            if (Victory)
+            {
+                WinMsg.text = WinWinMsg;
+                SwitchWin = false;
+            }
+        }     
     }
 
 
@@ -205,7 +206,7 @@ public class GameRun : MonoBehaviour
 
             if(data.OpCode == 10)
             {
-                WinMsg.text = System.Text.Encoding.UTF8.GetString(data.State);
+                WinWinMsg = System.Text.Encoding.UTF8.GetString(data.State);
                 Victory = true;
             }
 

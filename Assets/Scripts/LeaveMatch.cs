@@ -42,6 +42,6 @@ public class LeaveMatch : MonoBehaviour
     {
         await socket.LeaveMatchAsync(matchInfo.MatchId);
 
-        AsyncOperation Leave = SceneManager.LoadSceneAsync(0);
+        SceneManager.LoadSceneAsync(0);
     }
 }
