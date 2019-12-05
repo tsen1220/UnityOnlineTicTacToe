@@ -33,6 +33,7 @@ public class GameRun : MonoBehaviour
 
     public bool Victory = false;
 
+    private bool SwitchWin = true;
 
 
 
@@ -79,18 +80,23 @@ public class GameRun : MonoBehaviour
             }
         }
 
-        if (VictoryCondition(1))
+        if (SwitchWin)
         {
-            WinMsg.text = "O Win!";
-            await socket.SendMatchStateAsync(matchInfo.MatchId, 8,"O Win");
-            Victory = true;
+            if (VictoryCondition(1))
+            {
+                WinMsg.text = "O Win!";
+                await socket.SendMatchStateAsync(matchInfo.MatchId, 8, "O Win");
+                Victory = true;
+                SwitchWin = false;
+            }
+            else if (VictoryCondition(2))
+            {
+                WinMsg.text = "X Win!";
+                await socket.SendMatchStateAsync(matchInfo.MatchId, 9, "X Win");
+                SwitchWin = true;
+            }
         }
-        else if (VictoryCondition(2))
-        {
-            WinMsg.text = "X Win!";
-            await socket.SendMatchStateAsync(matchInfo.MatchId, 8,"X Win");
-            Victory = true;
-        }
+     
      
     }
 
@@ -195,6 +201,12 @@ public class GameRun : MonoBehaviour
                     drawControl = false;
                 }
 
+            }
+
+            if(data.OpCode == 10)
+            {
+                WinMsg.text = System.Text.Encoding.UTF8.GetString(data.State);
+                Victory = true;
             }
 
         };
