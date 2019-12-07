@@ -40,7 +40,7 @@ public class LobbyNakamaClient : MonoBehaviour
         socket.Connected += () => Debug.Log("Socket connected.");
         socket.ReceivedError += e => Debug.LogErrorFormat("Socket error: {0}", e.Message);
 
-        var deviceId = $"SystemInfo.deviceUniqueIdentifier-f-{5}";
+        var deviceId = SystemInfo.deviceUniqueIdentifier;
         session = await client.AuthenticateDeviceAsync(deviceId);
         await socket.ConnectAsync(session);
 

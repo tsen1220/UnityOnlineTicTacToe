@@ -13,8 +13,6 @@ We need to get session and client to let the websocket connected.
 ```
     ...
     using Nakama;
-    using Nakama.TinyJson;
-    ...
     ...
     ...
 ```
@@ -112,10 +110,10 @@ And players can join the match after receiving the match information from socket
 This part is associated with Nakama Server match_join_attempt and match_join with lua.
 
 ```
-     await socket.JoinMatchAsync(matchInfo);
+     await socket.JoinMatchAsync(matchInfo.MatchId);
 ```
 
-# Match Running
+## Match Running
 
 This part is associated with Nakama Server match_loop with lua.
 
@@ -127,39 +125,41 @@ We can send json_encode_data about match to Nakama Server with socket API : sock
 
 And Receive the Nakama server data with socket API : socket.ReceivedMatchState += data => callback().
 
+
 ```
         socket.ReceivedMatchState += data =>
         {
             if(data.OpCode == 3)
             {
-                var RecordData = System.Text.Encoding.UTF8.GetString(data.State);
-                int xindex = (RecordData[1]) - 48;
-                int yindex = (RecordData[3]) - 48;
-                int TicTac = (RecordData[5]) - 48;
-
-                GameRecord[xindex, yindex] = TicTac; 
-                drawControl = false;
-                if(TicTac == 1)
-                {
-                    Turn = false;
-                }else if(TicTac == 2)
-                {
-                    Turn = true;
-                }
+              ...
+              ...
+              ...
+              ...
+              ...
             }
 
             if (data.OpCode == 5)
             {
-                string RecordData = System.Text.Encoding.UTF8.GetString(data.State);
-                JsonData theData = JsonMapper.ToObject(RecordData);
-                if (theData["control"].ToString() == "False")
-                {
-                    drawControl = false;
-                }
-
+               ...
+               ...
+               ...
+               ...
+               ...
             }
 
         };
 
         data : data from Nakama Server.
+```
+
+## Match Leave
+
+When game is over, player can click leave button to leave the match.
+
+Use socket API : socket.LeaveMatchAsync(MatchId);
+
+```
+
+await socket.LeaveMatchAsync(matchInfo.MatchId);
+
 ```

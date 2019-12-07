@@ -42,6 +42,8 @@ public class LeaveMatch : MonoBehaviour
     {
         await socket.LeaveMatchAsync(matchInfo.MatchId);
 
+        Destroy(GameObject.FindGameObjectWithTag(Tags.Lobby.LobbyNakamaClient));
+
         SceneManager.LoadSceneAsync(0);
     }
 }

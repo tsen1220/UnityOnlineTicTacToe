@@ -186,7 +186,7 @@ public class GameRun : MonoBehaviour
         socket.ReceivedMatchState += data =>
         {
 
-            print(data.OpCode);
+         
             if (data.OpCode == 3)
             {
                 var RecordData = System.Text.Encoding.UTF8.GetString(data.State);
