@@ -125,4 +125,9 @@ public class LobbyNakamaClient : MonoBehaviour
         };
     }
 
+    public void ExitApp()
+    {
+        Application.Quit();
+    }
+
 }
