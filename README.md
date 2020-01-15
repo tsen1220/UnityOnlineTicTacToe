@@ -6,6 +6,8 @@ TicTacToe Nakama Server : https://github.com/tsen1220/LuaOnlineTicTacToeServer
 
 We need to import Nakama and LitJson to build this app.
 
+And we need to select 1024 x 768 (standalone).
+
 ## Nakama Client Connect
 
 We need to get session and client to let the websocket connected.
