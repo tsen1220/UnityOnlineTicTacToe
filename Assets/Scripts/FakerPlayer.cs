@@ -12,12 +12,10 @@ public class FakerPlayer : MonoBehaviour
 
     public Tags Tags;
 
-
     public async void CreateFakerPlayer(int index)
     {
-
-            try
-            {
+        try
+        {
             socket = client.NewSocket();
             socket.Connected += () =>
             {
@@ -38,22 +36,14 @@ public class FakerPlayer : MonoBehaviour
                 session = await client.AuthenticateDeviceAsync(deviceID);
                 await socket.ConnectAsync(session);
             }
-     
-
-
+            
             AddFakerPlayer();
             FakerMatchComplete();
-
-
-
         }
         catch (System.Exception e)
         {
             Debug.Log(e);
         }
-
-
-
     }
 
     public async void AddFakerPlayer()
@@ -67,17 +57,18 @@ public class FakerPlayer : MonoBehaviour
         int minCount = 2;
 
         // 地區位置等
-        var stringProperties = new Dictionary<string, string>() {
-  {"region", "asia"}
-};
+        var stringProperties = new Dictionary<string, string>() 
+        {
+            {"region", "asia"}
+        };
         // 牌位,房間資訊等
-        var numericProperties = new Dictionary<string, double>() {
-  {"Room", 2}
-};
+        var numericProperties = new Dictionary<string, double>() 
+        {
+            {"Room", 2}
+        };
 
         // nakama socket API  當加入Nakama的排隊系統時 會有一個Ticket
         matchTicket = await socket.AddMatchmakerAsync(query, minCount, maxCount, stringProperties, numericProperties);
-
     }
 
     public void FakerMatchComplete()
@@ -85,8 +76,6 @@ public class FakerPlayer : MonoBehaviour
         socket.ReceivedMatchmakerMatched += async matched =>
         {
             await socket.JoinMatchAsync(matched.MatchId);
-          
         };
     }
-
 }

@@ -12,8 +12,6 @@ public class LeaveMatch : MonoBehaviour
     private bool Victory;
     private LobbyNakamaClient nakamaClient;
 
-
-
     private void Awake()
     {
         nakamaClient = GameObject.FindGameObjectWithTag(Tags.Lobby.LobbyNakamaClient).GetComponent<LobbyNakamaClient>();
@@ -34,10 +32,7 @@ public class LeaveMatch : MonoBehaviour
             LeaveButton.SetActive(true);
         }
     }
-
-
-
-
+    
     public async void MatchLeave()
     {
         await socket.LeaveMatchAsync(matchInfo.MatchId);

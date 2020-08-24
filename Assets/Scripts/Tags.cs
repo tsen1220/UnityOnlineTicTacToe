@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Tags  {
-
-
+public class Tags  
+{
     public class Lobby
     {
         public const string PlayMatch = "PlayMatch";
@@ -19,4 +18,3 @@ public class Tags  {
         public const string WinMsg = "Test";
     }
 }
-

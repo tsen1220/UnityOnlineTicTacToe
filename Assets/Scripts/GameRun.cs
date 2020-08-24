@@ -26,47 +26,34 @@ public class GameRun : MonoBehaviour
     public static bool drawControl = true;
 
     private ISocket socket;
-
     private int xIndex, yIndex;
-
     private Text WinMsg;
-
     public bool Victory = false;
-
     private bool SwitchWin;
-
     private string WinWinMsg;
 
-
- 
     private  void Awake()
     {
         SwitchWin = true;
         Victory = false;
-
         nakamaClient = GameObject.FindGameObjectWithTag(Tags.Lobby.LobbyNakamaClient).GetComponent<LobbyNakamaClient>();
         socket = nakamaClient.socket;
-
         WinMsg = GameObject.FindGameObjectWithTag(Tags.Game.WinMsg).GetComponent<Text>();
-
     }
 
     private async void Start()
-    {   
+    {
         matchInfo = LobbyNakamaClient.MatchInfo;
         await socket.JoinMatchAsync(matchInfo.MatchId);
-
         await socket.SendMatchStateAsync(matchInfo.MatchId, 4, "GameStart");
-
         ReceiveData();
     }
 
-
     private async void Update()
     {
-        for(int i = 0; i<3;i++)
+        for (int i = 0; i < 3; i++)
         {
-            for(int j = 0; j < 3; j++)
+            for (int j = 0; j < 3; j++)
             {
                 GameObject chooseObject = GameObject.FindGameObjectWithTag($"Cell{i}{j}");
 
@@ -92,10 +79,8 @@ public class GameRun : MonoBehaviour
             }
             else if (VictoryCondition(2))
             {
-                
                 await socket.SendMatchStateAsync(matchInfo.MatchId, 9, "X Win");
                 SwitchWin = false;
-
             }
         }
 
@@ -104,20 +89,14 @@ public class GameRun : MonoBehaviour
             WinMsg.text = WinWinMsg;
             Turn = true;
             drawControl = true;
-
         }
-
-
-        
     }
-
 
     public async void Draw()
     {
         Text TicTac = GetComponentInChildren<Text>();
 
         Vector3 relativePosition = transform.position - new Vector3(352, 224, 0);
-
 
         xIndex = Mathf.RoundToInt(relativePosition.x) / 160;
         yIndex = Mathf.RoundToInt(relativePosition.y) / 160;
@@ -128,7 +107,7 @@ public class GameRun : MonoBehaviour
         }
         else
         {
-            if (GameRecord[xIndex,yIndex] !=0)
+            if (GameRecord[xIndex,yIndex] != 0)
             {
                 return;
             }
@@ -139,9 +118,7 @@ public class GameRun : MonoBehaviour
                     TicTac.text = "O";
                     GameRecord[xIndex, yIndex] = 1;
 
-
-                    // 0: xIndex 1:yIndex 2:下的種類
-
+                    // 0: xIndex, 1:yIndex, 2:圈或差 (1 或 2)
                     int[] drawPostion = new int[3];
                     drawPostion[0] = xIndex;
                     drawPostion[1] = yIndex;
@@ -149,10 +126,8 @@ public class GameRun : MonoBehaviour
 
                     drawControl = true;
 
-
-                    //使用Nakama的TinyJson       using Nakama.TinyJson
+                    //使用Nakama的TinyJson, using Nakama.TinyJson
                     await socket.SendMatchStateAsync(matchInfo.MatchId, 1, drawPostion.ToJson());
-
                 }
                 else
                 {
@@ -166,16 +141,10 @@ public class GameRun : MonoBehaviour
 
                     drawControl = true;
 
-                    //使用Nakama的TinyJson       using Nakama.TinyJson
-
                     await socket.SendMatchStateAsync(matchInfo.MatchId, 2, drawPostion.ToJson());
-
                 }
             }
         }
-       
-       
-
     }
 
 
@@ -185,8 +154,6 @@ public class GameRun : MonoBehaviour
     {
         socket.ReceivedMatchState += data =>
         {
-
-         
             if (data.OpCode == 3)
             {
                 var RecordData = System.Text.Encoding.UTF8.GetString(data.State);
@@ -196,10 +163,11 @@ public class GameRun : MonoBehaviour
 
                 GameRecord[xindex, yindex] = TicTac; 
                 drawControl = false;
-                if(TicTac == 1)
+                if (TicTac == 1)
                 {
                     Turn = false;
-                }else if(TicTac == 2)
+                }
+                else if (TicTac == 2)
                 {
                     Turn = true;
                 }
@@ -226,17 +194,14 @@ public class GameRun : MonoBehaviour
         };
     }
 
-
-
     public bool VictoryCondition(int TicTac)
     {
         int victoryXIndex = 0;
         int victoryYIndex = 0;
         int victoryCount = 0;
 
-
         //橫 1
-        while (GameRecord[victoryXIndex,victoryYIndex] !=0 && GameRecord[victoryXIndex, victoryYIndex] == TicTac)
+        while (GameRecord[victoryXIndex,victoryYIndex] != 0 && GameRecord[victoryXIndex, victoryYIndex] == TicTac)
         {
             victoryCount += 1;
             if(victoryCount == 3)
@@ -244,7 +209,6 @@ public class GameRun : MonoBehaviour
                 return true;
             }
             victoryXIndex += 1;
-          
         }
         victoryCount = 0;
 
@@ -260,12 +224,10 @@ public class GameRun : MonoBehaviour
                 return true;
             }
             victoryXIndex += 1;
-
         }
         victoryCount = 0;
 
         //橫 3
-
         victoryXIndex = 0;
         victoryYIndex = 2;
 
@@ -277,12 +239,10 @@ public class GameRun : MonoBehaviour
                 return true;
             }
             victoryXIndex += 1;
-
         }
         victoryCount = 0;
 
         //直 1
-
         victoryXIndex = 0;
         victoryYIndex = 0;
 
@@ -294,7 +254,6 @@ public class GameRun : MonoBehaviour
                 return true;
             }
             victoryYIndex += 1;
-
         }
         victoryCount = 0;
 
@@ -310,12 +269,10 @@ public class GameRun : MonoBehaviour
                 return true;
             }
             victoryYIndex += 1;
-
         }
         victoryCount = 0;
 
         //直 3
-
         victoryXIndex = 2;
         victoryYIndex = 0;
 
@@ -327,13 +284,10 @@ public class GameRun : MonoBehaviour
                 return true;
             }
             victoryYIndex += 1;
-
         }
         victoryCount = 0;
 
-
         //斜 1
-
         victoryXIndex = 0;
         victoryYIndex = 0;
 
@@ -346,13 +300,10 @@ public class GameRun : MonoBehaviour
             }
             victoryXIndex += 1;
             victoryYIndex += 1;
-
         }
         victoryCount = 0;
 
-
         //斜 2
-
         victoryXIndex = 0;
         victoryYIndex = 2;
 
@@ -365,15 +316,9 @@ public class GameRun : MonoBehaviour
             }
             victoryXIndex += 1;
             victoryYIndex -= 1;
-
         }
         victoryCount = 0;
-
 
         return false;
     }
 }
-
-
-
-

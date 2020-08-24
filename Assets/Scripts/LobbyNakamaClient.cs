@@ -12,23 +12,15 @@ public class LobbyNakamaClient : MonoBehaviour
     private IMatchmakerTicket matchTicket;
 
     public GameObject playMatch, QuitMatch, WaitMsg, Title;
-
     public Tags Tags;
-
     public bool readyToGo = false;
-
     public static IMatchmakerMatched MatchInfo;
   
-
-
     private async void Awake()
     {
-
         //物件顯示以及隱藏
         QuitMatch.SetActive(false);
         WaitMsg.SetActive(false);
-
-
 
         if (socket != null)
         {
@@ -43,8 +35,6 @@ public class LobbyNakamaClient : MonoBehaviour
         var deviceId = SystemInfo.deviceUniqueIdentifier;
         session = await client.AuthenticateDeviceAsync(deviceId);
         await socket.ConnectAsync(session);
-
-
 
         // Nakama配對監聽器
         matchComplete();
@@ -62,10 +52,7 @@ public class LobbyNakamaClient : MonoBehaviour
             SceneManager.LoadScene(1);
             readyToGo = false;
         }
-    
     }
-
-
 
     public async void  addGameMatchList()
     {
@@ -78,43 +65,36 @@ public class LobbyNakamaClient : MonoBehaviour
         int minCount = 2;
 
         // 地區位置等
-        var stringProperties = new Dictionary<string, string>() {
-  {"region", "asia"}
-};
+        var stringProperties = new Dictionary<string, string>() 
+        {
+            {"region", "asia"}
+        };
         // 牌位,房間資訊等
-        var numericProperties = new Dictionary<string, double>() {
-  {"Room", 2}
-};
+        var numericProperties = new Dictionary<string, double>() 
+        {
+            {"Room", 2}
+        };
 
         // nakama socket API  當加入Nakama的排隊系統時 會有一個Ticket
         matchTicket= await socket.AddMatchmakerAsync(query, minCount, maxCount, stringProperties, numericProperties);
-
 
         playMatch.SetActive(false);
         Title.SetActive(false);
         QuitMatch.SetActive(true);
         WaitMsg.SetActive(true);
-
     }
-
-
-
 
     public async void CancelGameMatchList()
     {
-
         await socket.RemoveMatchmakerAsync(matchTicket);
         playMatch.SetActive(true);
         Title.SetActive(true);
         QuitMatch.SetActive(false);
         WaitMsg.SetActive(false);
-        
     }
-
 
     /// <summary>
     /// 配對完成就會將Ticket 刪除
-    ///
     /// </summary>
     public void matchComplete()
     {
@@ -129,5 +109,4 @@ public class LobbyNakamaClient : MonoBehaviour
     {
         Application.Quit();
     }
-
 }
